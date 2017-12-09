@@ -1,0 +1,207 @@
+---
+title: "DVM Permutation Test - Homework 1"
+author: "Jeremy Williams"
+date: "October 11, 2017"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r}
+#install.packages("combinat")
+library("combinat")
+```
+
+## **Correlation - Exact Test**
+
+### **Pearson Correlation**
+
+The first row is chest circumference (in inches) of five subjects. Let us
+call this X. The second row is the respective total volumes of air that can
+be breathed in and out in one minute (in liters) for the same five
+subjects. Let us call this Y.
+
+The null hypothesis is, Ho: p = 0
+"Chest circumference and volume of air are not correlated.".
+
+The alternative hypothesis is, H1: p > 0
+"Chest circumference and volume of air are positively correlated".
+
+
+```{r} 
+x= c(39,29,60,40,32)
+y=c(11,5,20,8,6)
+sttrue= cor(x,y,method = c("pearson"))
+n=length(y)
+nr=fact(n) #number of rearrangements to be examined
+st=numeric(nr)
+cnt=0
+d=permn(y)
+for (i in 1:nr){
+  st[i]<-cor(d[[i]],x, method = c("pearson"))
+  if(st[i] > sttrue)cnt=cnt+1 }
+
+hist(st)
+abline(v=sttrue, lwd=4, col="blue")
+
+#True value using Pearson correlation
+sttrue
+
+#p-value
+cnt/nr
+```
+
+A small p-value (p "less than or equal to" 0.05) indicates strong evidence against the null hypothesis, so we reject the null hypothesis (Ho is rejected). Chest circumference and volume of air are positively correlated.
+
+### **Spearman Correlation**
+
+```{r}
+#---
+
+x= c(39,29,60,40,32)
+y=c(11,5,20,8,6)
+sttrue1 = cor(x,y,method = c("spearman"))
+n=length(y)
+nr1=fact(n) #number of rearrangements to be examined
+st1=numeric(nr1)
+cnt=0
+d=permn(y)
+for (i in 1:nr1){
+  st1[i]<-cor(d[[i]],x, method = c("spearman"))
+  if(st1[i] > sttrue1)cnt=cnt+1 }
+
+hist(st1)
+abline(v=sttrue1, lwd=4, col="blue")
+
+#True value using Spearman correlation
+sttrue1
+
+#p-value
+cnt/nr1
+```
+
+A small p-value (p "less than or equal to" 0.05) indicates strong evidence against the null hypothesis, so we also reject the null hypothesis (Ho is rejected). Chest circumference and volume of air are positively correlated.
+
+******
+
+## **T-Test and Other Statistics**
+
+### **T-test with Permutation Test** 
+
+These are the increments of weight recorded in an experiment where a
+new additive has been added to a standard compound feed.
+
+The null hypothesis is, Ho: ua - ub = 0 
+"The additive is not efficient".
+
+The alternative hypothesis is, H1: ua - ub "not equal" 0
+"The additive is efficient".
+
+```{r}
+nr5=10000 #number of rearrangements to be examined
+st5<-numeric(nr5)
+stand5=c(2.5, 3.4, 2.9, 4.1, 5.3, 3.4, 1.9, 3.3, 1.8)
+stand_ad5 = c(2.5, 3.4, 2.9, 4.1, 5.3, 3.4, 1.9, 3.3, 1.8,
+              3.5, 6.3, 4.2, 4.3, 3.8, 5.7, 4.4 )
+
+# Classical T-test
+t.test(stand5,stand_ad5)
+
+n15=length(stand_ad5);n25=length(stand5)
+total<-n15+n25
+sttrue5= mean(stand_ad5)-mean(stand5)
+cnt= 0 #zero the counter
+#Put both sets of observations in a single vector
+vect= c(stand_ad5, stand5)
+for (i in 1:nr5){
+  d= sample(vect,n15+n25)
+  sta_ad<-d[1:n15]
+  a<-n15+1;sta<-d[a:total]
+  st5[i]<-mean(sta_ad)-mean(sta)
+  if(st5[i] > sttrue5)cnt=cnt+1 }
+
+hist(st5)
+abline(v=sttrue5, lwd=4, col="blue")
+
+#True value using the difference of the means
+sttrue5
+
+#p-value
+cnt/nr5
+```
+
+A large p-value (p "greater than" 0.05) indicates weak evidence against the null hypothesis so, you fail to reject the null hypothesis (Ho is not rejected).
+
+Therefore, the additive is efficient.
+
+### **Wilcoxon Rank Sum Test**
+
+Both t-Test and Wilcoxon rank test can be used to compare the mean of two (2) samples. The difference is t-Test assumes the samples being tests is drawn from a normal distribution, while, Wilcoxon's rank sum test does not.
+
+```{r}
+
+stand=c(2.5, 3.4, 2.9, 4.1, 5.3, 3.4, 1.9, 3.3, 1.8)
+stand_ad = c(2.5, 3.4, 2.9, 4.1, 5.3, 3.4, 1.9, 3.3, 1.8,
+              3.5, 6.3, 4.2, 4.3, 3.8, 5.7, 4.4 )
+wilcox.test(stand, stand_ad, alternative = "g")
+```
+
+A large p-value (p "greater than" 0.05) indicates weak evidence against the null hypothesis so, you fail to reject the null hypothesis (Ho is not rejected).
+
+Therefore, the additive is efficient.
+
+### **Kolmogorov And Smirnov Test**
+
+Kolmogorov-Smirnov test is used to check whether 2 samples follow the same distribution.
+
+
+```{r}
+
+stand=c(2.5, 3.4, 2.9, 4.1, 5.3, 3.4, 1.9, 3.3, 1.8)
+stand_ad = c(2.5, 3.4, 2.9, 4.1, 5.3, 3.4, 1.9, 3.3, 1.8,
+              3.5, 6.3, 4.2, 4.3, 3.8, 5.7, 4.4 )
+ks.test(stand, stand_ad)
+
+```
+
+A large p-value (p "greater than" 0.05) indicates weak evidence against the null hypothesis so, we fail to reject the null hypothesis (Ho is not rejected).
+
+Therefore, the additive is efficient.
+
+### **Fisher's F-Test**
+
+Fisher's F test can be used to check if two samples have same variance.
+
+```{r}
+
+stand=c(2.5, 3.4, 2.9, 4.1, 5.3, 3.4, 1.9, 3.3, 1.8)
+stand_ad = c(2.5, 3.4, 2.9, 4.1, 5.3, 3.4, 1.9, 3.3, 1.8,
+              3.5, 6.3, 4.2, 4.3, 3.8, 5.7, 4.4 )
+var.test(stand, stand_ad)
+
+```
+
+A large p-value (p "greater than" 0.05) indicates weak evidence against the null hypothesis so, we fail to reject the null hypothesis (Ho is not rejected).
+
+Therefore, the additive is efficient.
+
+### **Summary Statistics**
+
+```{r}
+library(pastecs)
+
+stand=c(2.5, 3.4, 2.9, 4.1, 5.3, 3.4, 1.9, 3.3, 1.8)
+stand_ad = c(2.5, 3.4, 2.9, 4.1, 5.3, 3.4, 1.9, 3.3, 1.8,
+              3.5, 6.3, 4.2, 4.3, 3.8, 5.7, 4.4 )
+
+#Standard only
+stat.desc(stand)
+
+#Standard + Additive
+stat.desc(stand_ad)
+
+```
+### **Conclusion**
+
+After exploring several statistics in order to perform the permutation
+test, we can conclude that the increments of weight recorded in an experiment, where a new additive has been added to a standard compound feed, is efficient.

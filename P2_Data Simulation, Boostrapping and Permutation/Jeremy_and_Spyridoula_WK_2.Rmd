@@ -1,0 +1,172 @@
+---
+title: "DVM Permutation Test - Homework 2"
+author: "Jeremy Williams and Spyridoula Chrysikopoulou-Soldatou"
+date: "October 18, 2017"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+## **Prediction of Multiple Regression Model**
+
+```{r}
+wc <- c(16,20,25,27,32,48,48)
+t <- c(75,83,85,85,92,97,99)
+tmg <- c(1.85,1.25,1.5,1.75,1.15,1.75,1.6)
+
+# Fit a linear model and run a summary of its results.
+mod1<-lm(wc ~ t + tmg)
+summary(mod1)
+
+# Predicted values
+fitted(mod1) 
+
+# Model coefficients
+coefficients(mod1)
+
+# CIs for model parameters
+confint(mod1, level=0.95)
+
+# Plot model residuals.
+plot(mod1, pch=16, which=1)
+
+# Extract coefficients
+mod1_coef <- round(coef(mod1), 3) 
+
+# Display equation 
+mtext(bquote(wc == .(mod1_coef[3])* tmg +.(mod1_coef[2])* t + .(mod1_coef[1])),
+      adj=1, padj=-2) 
+```
+
+******
+
+## **Significance of the Variables T and TMG**
+
+We begin by testing whether a set of independent variables has   no   partial   effect   on   the   dependent   variable, "Y". 
+
+Our model is: 
+
+**wc = B0 + B1t + B2tmp + e**
+
+**Null Hypothesis**: The initial assumption is that there is no relation, which is expressed as: 
+
+**Ho: B1 = B2 = 0**.
+
+**Alternative Hypothesis**: At least one of the independent variables IS useful in explaining/predicting Y, expressed as: 
+
+**H1: At least one Bi is "not equal to" 0**.
+
+### **Exact Permuatition Test **
+
+```{r}
+#install.packages("combinat")
+library("combinat")
+wc1 <- c(16,20,25,27,32,48,48)
+t1 <- c(75,83,85,85,92,97,99)
+tmg1 <- c(1.85,1.25,1.5,1.75,1.15,1.75,1.6)
+mod2<-glm(wc1 ~ t1 + tmg1, family = gaussian)
+a<-summary(mod2)
+Tinttrue<-abs(a$coefficients[1,3])
+Tttrue<-abs(a$coefficients[2,3])
+Ttmgtrue<-abs(a$coefficients[3,3])
+
+#number of rearrangements to be examined
+n<-length(wc1)
+nr<-fact(n) 
+nr
+
+Tint=numeric(nr);Tt=numeric(nr);Ttmg=numeric(nr)
+newy<-permn(wc1)
+for (i in 1:nr){
+  mod2<-glm(newy[[i]] ~ t1 + tmg1,family = gaussian)
+  a<-summary(mod2)
+  Tint[i]<-abs(a$coefficients[1,3]) 
+  Tt[i]<-abs(a$coefficients[2,3])
+  Ttmg[i]<-abs(a$coefficients[3,3])}
+
+par(mfrow=c(1,1))
+hist(Tint)
+abline(v=Tinttrue, lwd=4, col="blue")
+
+#True t-value of intercept "B0"
+Tinttrue
+
+#P-Value of intercept "B0"
+length(Tint[Tint>= Tinttrue])/nr
+
+par(mfrow=c(1,1))
+hist(Tt)
+abline(v=Tttrue, lwd=4, col="blue")
+
+#True t-Value of Time (T) "B1"
+Tttrue
+
+#P-value of Time (T) "B1"
+length(Tt[Tt>= Tttrue])/nr
+
+par(mfrow=c(1,1))
+hist(Ttmg)
+abline(v=Ttmgtrue, lwd=4, col="blue")
+
+#True t-Value of Time moving the grass (TMG) "B2"
+Ttmgtrue
+
+#P-Value of Time moving the grass (TMG) "B2"
+length(Ttmg[Ttmg>= Ttmgtrue])/nr
+```
+
+All (intercept, T and TMG) small p-values (p "less than or equal to" 0.05) indicates strong evidence against the null hypothesis, so we also reject the null hypothesis (Ho is rejected).
+
+### **Multiple Regression through the Origin**
+
+```{r}
+ 
+#install.packages("combinat")
+library("combinat")
+#install.packages("ape")
+library("ape")
+wc1 <- c(16,20,25,27,32,48,48)
+t1 <- c(75,83,85,85,92,97,99)
+tmg1 <- c(1.85,1.25,1.5,1.75,1.15,1.75,1.6)
+a5<-data.frame(wc1,t1,tmg1)
+
+#number of rearrangements to be examined
+nr<-fact(length(wc1))
+nr 
+
+#Permutation method using number of rearrangements
+lmorigin(wc1 ~ t1 + tmg1, data =a5, nperm=nr) 
+```
+
+Both (parametric and permutational) small p-values (p "less than or equal to" 0.05) indicates strong evidence against the null hypothesis, so we also reject the null hypothesis (Ho is rejected).
+
+### **LM and GLMs Comparison** 
+
+```{r}
+
+#install.packages("texreg")
+library("texreg")
+wc1 <- c(16,20,25,27,32,48,48)
+t1 <- c(75,83,85,85,92,97,99)
+tmg1 <- c(1.85,1.25,1.5,1.75,1.15,1.75,1.6)
+
+# Estimate with OLS (Model 1):
+reg1<-lm(wc1 ~ t1 + tmg1)
+
+# Estimate with GLS (Model 2):
+reg2<-glm(wc1 ~ t1 + tmg1, family = gaussian)
+
+# Compare:
+screenreg(l = list(reg1,reg2))
+```
+
+Both (LM and GLM) small p-values (p "less than or equal to" 0.05) indicates strong evidence against the null hypothesis, so we also reject the null hypothesis (Ho is rejected).
+
+******
+
+## **Conclusion**
+
+After testing the significance of the variables T and TMG, we can conclude that at least one of the variables "T" and "TMG"" are significant. 
+
+
+

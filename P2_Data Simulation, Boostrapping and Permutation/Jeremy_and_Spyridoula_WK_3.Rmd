@@ -1,0 +1,88 @@
+---
+title: "DVM Parametric Bootstrap - Homework 3"
+author: "Jeremy Williams and Spyridoula Chrysikopoulou-Soldatou"
+date: "October 25, 2017"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+## **Multiple capture-recapture problem**
+
+### **Chao's estimator (No. of females)**
+
+```{r}
+install.packages("SPECIES")
+library(SPECIES)
+
+F_sights <- data.frame(sights = 1:7, # Number of sight cases, 
+                       nbear = c(11, 13, 5, 1, 1, 0, 2)) # Frequencies
+
+F_sights
+
+chao1984(F_sights,conf=0.95)
+
+```
+
+This returns: 
+
+**Nhat** - point estimate of the no. of Females
+
+**SE** - standard error of the point estimate
+
+**CI** - confidence interval using a log transformation explained in Chao 1987.
+
+Note: We can also show this below by estimating the Lambda and then Parametric bootstrap (to compute CI).
+
+
+### **Zero-truncated Poisson Distribution (Lambda estimate and CI)**
+
+
+```{r}
+
+#install.packages("SPECIES")
+library(SPECIES)
+
+F_sights <- data.frame(sights = 1:7, # Number of sight cases, 
+                       nbear = c(11, 13, 5, 1, 1, 0, 2)) # Frequencies
+
+PermF_T <- chao1984(F_sights,conf=0.95)$Nhat
+
+#install.packages("fossil")
+library(fossil)
+
+
+Fu <- function(x) x/(1-exp(-x))-2.3
+Ux <- uniroot(Fu,c(1,10))
+
+Lamd <-Ux$root
+
+
+# Parametric bootstrap (compute CI)
+set.seed(11)
+nsim <-1000
+PermF <-numeric((length (nsim)))
+     for (i in 1:nsim){ 
+       n<- rpois(33,Lamd)
+       while (any(n==0)== "TRUE"){
+         n <-rpois(33,Lamd)
+       }
+       PermF[i] <-chao2(n)
+     }
+
+#Lambda
+Lamd
+
+quantile(PermF, probs = c(0.025, 0.975))
+
+par(mfrow=c(1,1))
+hist(PermF)
+abline(v=PermF_T, lwd=4, col="blue")
+
+```
+
+It is estimated that lambda is **1.983573**. 
+
+The blue line shows "Nhat" (**38**) - point estimate of the no. of Females
+
+The confidence interval of the total number of females is (**34.19841**, **51.75000**) 
