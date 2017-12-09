@@ -1,0 +1,446 @@
+---
+title: "Global Financial Stability Randomization Review"
+author: "Jeremy Williams"
+date: "December 10, 2017"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+##**INTRODUCTION**
+
+Since the beginning of the recent global financial crisis financial stability has been shifted into the center of attention. "To be able to detect potential threats to financial stability and take appropriate macro prudential measures early on, policymakers do not only need to monitor and assess financial stability but also to project its likely future development. One of the lessons to be learned from the recent financial and economic crisis is that a very broad range of indicators must be monitored to be able to assess overall financial stability in a reliable manner."**(Petr Jakubík, Tomás Slacík 2013)**.
+
+The most common methods of measuring financial stability are: early warning systems, macro-stress testing, financial stability indices. In this report I will show the examples of financial stability indices.
+  
+The financial stability indexes for nine countries, from February 2006 to February 2014, were studied and divided in three groups. 
+
+A Prediction of USA as a linear function of all countries samplied, by means of a multiple regression model, was conducted. Each country´s significant level, expect for USA, was tested using an approximate permutation test. Finally, each divided group´s model was tested and result were compared.       
+
+##**FINANCIAL STABILITY** 
+
+Financial Stability (FS) is a condition, when a financial system is able to withstand economic shocks, managing financial risks, processing payment transactions and intermediating financial resources.
+
+After the global financial crisis the topic of financial stability became very important. It became clear that for detecting financial stability risks and crisis and taking appropriate decisions one should be able to project future financial stability development. Globalization, financial innovations and STR (Scientific-technological revolution) started many financial processes bringing new transmission channels and making the process of measuring financial stability more complicated. To assess financial stability a big number of economic and financial indicators must be monitored. 
+
+There are different methods of measuring financial stability and each has its advantages and disadvantages. The most common methods are:
+
+* Early warning systems,
+* Macro-stress testing
+* Financial stability indices
+
+Early warning systems are created from potential indicators which are aiming to predict the probability of financial crisis. But this systems doesn't provide a deep and detailed financial stability analysis.
+
+Macro-stress testing provides more detailed analysis, which can measure financial resistance to risks and threats. Stress tests can reveal not only the source of risk but also vulnerabilities of a financial system.
+
+Financial stability indices provide information on the measure of changes in a representative group of individual indicators.
+There are different indices which provide the information about financial stability. Let's have a look at some of them:
+
+Cleveland Financial Stress Index tracks stress in six types of markets: credit markets, equity markets, foreign exchange markets, funding markets, real estate markets, and securitization markets. It is a coincident indicator of systemic stress, where a high value of CFSI indicates high systemic financial stress. Units of CFSI are expressed as standardized differences from the mean. The CFSI provides a continuous measure of stress. For interpretation of index it is divided into four levels, which called grades. The grade thresholds are dynamic and move slowly over time. The four grades from the Probability of Systemic Stress Episode are:
+
+CFSI Grade	| Threshold Description |	Range | Probability
+--------|-------------------|--------------------|----------
+Grade 1	| Low stress period	| CFSI $\leq$ -0.50 | 1.9
+Grade 2	| Normal stress period | -0.50 $<$ CFSI $<$ 0.59 | 8.7
+Grade 3	| Moderate stress period| 0.59 $<$ CFSI $<$ 1.68| 26.3
+Grade 4	| Significant stress period	| CFSI $\geq$ 1.68 | 56.3
+
+Another example is Financial Instability Index (FII) created by *Petr Jakubík and Tomás Slacík*. FII gauges the level of financial market stress in selected Central, Eastern and Southeastern European (CESEE) countries. Index observes eleven variables relative to financial stability:
+
+* Money market year-on-year change, 
+* Money market volatility, 
+* Spread between domestic and German interbank offered rates, 
+* Exchange rate year-on-year change, 
+* Exchange rate volatility, 
+* Stock index year-on-year change, 
+* Stock index volatility, 
+* Ten-year government bond yield, 
+* Ten-year government bond yield -year-on-year change, 
+* Ten-year government bond yield -volatility, 
+* Composite EMBI Global. 
+
+In the output each indicator is transformed into the number between 0 and 1, and the closer output is to the 0, the more financially stable the economy is in a certain period of time **(Petr Jakubík, Tomás Slacík 2013)**.
+
+##**GLOBAL DATA DESCRIPTION**
+
+To conduct the empirical study, an analysis of the data globally using the USA as a benchmark was used. The data was collected from Eurostat and World Bank Group. The time window was from January 2006 to January 2014. 
+
+The research was complied into a initial data frame called "GData"
+
+GData has 97 rows and 10 columns of data was collected from Eurostat and World Bank Group.
+
+GData has comprised of nine country´s FS indexes. 
+
+They are as followed:
+
+* Euro zone countries: Germany, France, Italy, Spain 
+* Countries from EU but not from Euro zone: Poland, United Kingdom
+* None EU or Euro zone countries: Brazil, Russia
+
+## **Prediction of Multiple Regression Model**
+
+A Prediction of USA as a linear function of all countries samplied, by means of a multiple regression model is displayed below:
+
+```{r}
+#install.packages("readxl")
+suppressMessages(suppressWarnings(library("readxl")))
+
+Gdata<-read_excel("WorldData.xlsx")
+
+# 	USA, BRA,	FR,	GR,	IT,	PO,	RUS,	SPA,	UK
+US <- Gdata$USA
+BRA <- Gdata$BRA 
+FR <- Gdata$FR
+GR <- Gdata$GR
+IT <- Gdata$IT
+PO <- Gdata$PO
+RUS <- Gdata$RUS
+SPA <- Gdata$SPA
+UK <- Gdata$UK
+  
+# Fit a linear model and run a summary of its results.
+mod1<-lm(US ~ BRA + FR + GR + IT + PO + RUS + SPA + UK)
+summary(mod1)
+
+# CIs for model parameters
+confint(mod1, level=0.95)
+
+# Plot model residuals.
+par(mfrow=c(1,1))
+plot(mod1, pch=16, which=1)
+```
+
+******
+
+## **Significance of the all countries, except USA **
+
+The testing began by testing whether a set of independent variables has   no   partial   effect   on   the   dependent   variable, "US". 
+
+The model is: 
+
+**US = B0 + B1BRA + B2FR + B3GR + B4IT + B5PO + B6RUS + B7SPA + B8UK + e**
+
+**Null Hypothesis**: The initial assumption is that there is no relation, which is expressed as: 
+
+**Ho: B1 = B2 = B3 = B4 = B5 = B6 = B7 = B8 = 0**.
+
+**Alternative Hypothesis**: At least one of the independent variables IS useful in explaining/predicting US, expressed as: 
+
+**H1: At least one Bi is "not equal to" 0**.
+
+###**Approximate Permuatition Test**
+
+All country´s significant level, expect for USA, using an approximate permutation test was tested below:
+
+```{r}
+#install.packages("combinat")
+suppressMessages(suppressWarnings(library("combinat")))
+#install.packages("readxl")
+suppressMessages(suppressWarnings(library("readxl")))
+
+## **Prediction of Multiple Regression Model**
+
+Gdata<-read_excel("WorldData.xlsx")
+
+# 	USA, BRA,	FR,	GR,	IT,	PO,	RUS,	SPA,	UK
+US <- Gdata$USA
+BRA <- Gdata$BRA 
+FR <- Gdata$FR
+GR <- Gdata$GR
+IT <- Gdata$IT
+PO <- Gdata$PO
+RUS <- Gdata$RUS
+SPA <- Gdata$SPA
+UK <- Gdata$UK
+
+# Fit a linear model and run a summary of its results.
+mod2<-glm(US ~ BRA + FR + GR + IT + PO + RUS + SPA + UK, family = gaussian)
+a<-summary(mod2)
+a
+
+ZUSinttrue<-abs(a$coefficients[1,3])
+ZBRAtrue<-abs(a$coefficients[2,3])
+ZFRtrue<-abs(a$coefficients[3,3])
+ZGRtrue<-abs(a$coefficients[4,3])
+ZITtrue<-abs(a$coefficients[5,3])
+ZPOtrue<-abs(a$coefficients[6,3])
+ZRUStrue<-abs(a$coefficients[7,3])
+ZSPAtrue<-abs(a$coefficients[8,3])
+ZUKtrue<-abs(a$coefficients[9,3])
+
+#number of rearrangements to be examined
+nr=10000 #number of rearrangements to be examined 
+
+ZUSint=numeric(nr);ZBRA=numeric(nr);ZFR=numeric(nr);
+ZGR=numeric(nr);ZIT=numeric(nr);ZPO=numeric(nr);
+ZRUS=numeric(nr);ZSPA=numeric(nr);ZUK=numeric(nr) 
+
+for (i in 1:nr){
+  newUS<-sample(US, 97)
+  mod2<-glm(newUS ~ BRA + FR + GR + IT + PO + RUS + SPA + UK, family = gaussian)
+  a<-summary(mod2)
+  ZUSint[i]<-abs(a$coefficients[1,3]) 
+  ZBRA[i]<-abs(a$coefficients[2,3])
+  ZFR[i]<-abs(a$coefficients[3,3])
+  ZGR[i]<-abs(a$coefficients[4,3]) 
+  ZIT[i]<-abs(a$coefficients[5,3])
+  ZPO[i]<-abs(a$coefficients[6,3])
+  ZRUS[i]<-abs(a$coefficients[7,3])
+  ZSPA[i]<-abs(a$coefficients[8,3])
+  ZUK[i]<-abs(a$coefficients[9,3])}
+
+#US
+par(mfrow=c(1,1))
+hist(ZUSint)
+abline(v=ZUSinttrue, lwd=4, col="blue")
+
+#True t-value of intercept "B0"
+ZUSinttrue
+
+#P-Value of intercept "B0"
+length(ZUSint[ZUSint>= ZUSinttrue])/nr
+
+#BRA
+par(mfrow=c(1,1))
+hist(ZBRA)
+abline(v=ZBRAtrue, lwd=4, col="blue")
+
+#True t-Value of Time (T) "B1"
+ZBRAtrue
+
+#P-value of Time (T) "B1"
+length(ZBRA[ZBRA>= ZBRAtrue])/nr
+
+#FR
+par(mfrow=c(1,1))
+hist(ZFR)
+abline(v=ZFRtrue, lwd=4, col="blue")
+
+#True t-Value of Time moving the grass (TMG) "B2"
+ZFRtrue
+
+#P-Value of Time moving the grass (TMG) "B2"
+length(ZFR[ZFR>= ZFRtrue])/nr
+
+#GR
+par(mfrow=c(1,1))
+hist(ZGR)
+abline(v=ZGRtrue, lwd=4, col="blue")
+
+#True t-Value of Time moving the grass (TMG) "B3"
+ZGRtrue
+
+#P-Value of Time moving the grass (TMG) "B3"
+length(ZGR[ZGR>= ZGRtrue])/nr
+
+#IT
+par(mfrow=c(1,1))
+hist(ZIT)
+abline(v=ZITtrue, lwd=4, col="blue")
+
+#True t-Value of Time moving the grass (TMG) "B4"
+ZITtrue
+
+#P-Value of Time moving the grass (TMG) "B4"
+length(ZIT[ZIT>= ZITtrue])/nr
+
+#PO
+par(mfrow=c(1,1))
+hist(ZPO)
+abline(v=ZPOtrue, lwd=4, col="blue")
+
+#True t-Value of Time moving the grass (TMG) "B5"
+ZPOtrue
+
+#P-Value of Time moving the grass (TMG) "B5"
+length(ZPO[ZPO>= ZPOtrue])/nr
+
+#RUS
+par(mfrow=c(1,1))
+hist(ZRUS)
+abline(v=ZRUStrue, lwd=4, col="blue")
+
+#True t-Value of Time moving the grass (TMG) "B6"
+ZRUStrue
+
+#P-Value of Time moving the grass (TMG) "B6"
+length(ZFR[ZRUS>= ZRUStrue])/nr
+
+#SPA
+par(mfrow=c(1,1))
+hist(ZSPA)
+abline(v=ZSPAtrue, lwd=4, col="blue")
+
+#True t-Value of Time moving the grass (TMG) "B7"
+ZSPAtrue
+
+#P-Value of Time moving the grass (TMG) "B7"
+length(ZSPA[ZSPA>= ZSPAtrue])/nr
+
+#UK
+par(mfrow=c(1,1))
+hist(ZUK)
+abline(v=ZUKtrue, lwd=4, col="blue")
+
+#True t-Value of Time moving the grass (TMG) "B8"
+ZUKtrue
+
+#P-Value of Time moving the grass (TMG) "B8"
+length(ZUK[ZUK>= ZUKtrue])/nr
+
+```
+
+Some countries large p-values (p "greater than" 0.05) indicates weak evidence against the null hypothesis so, you fail to reject the null hypothesis (Ho is not rejected).
+
+
+### **Multiple Regression through the Origin**
+
+```{r}
+
+#install.packages("combinat")
+suppressMessages(suppressWarnings(library("combinat")))
+#install.packages("ape")
+suppressMessages(suppressWarnings(library("ape")))
+#install.packages("readxl")
+suppressMessages(suppressWarnings(library("readxl")))
+
+Gdata<-read_excel("WorldData.xlsx")
+
+# 	USA, BRA,	FR,	GR,	IT,	PO,	RUS,	SPA,	UK
+US <- Gdata$USA
+BRA <- Gdata$BRA 
+FR <- Gdata$FR
+GR <- Gdata$GR
+IT <- Gdata$IT
+PO <- Gdata$PO
+RUS <- Gdata$RUS
+SPA <- Gdata$SPA
+UK <- Gdata$UK
+
+Ga<-data.frame(US,BRA,FR,GR,IT,PO,RUS,SPA,UK)
+
+#number of rearrangements to be examined
+nr<-10000
+
+#Permutation method using number of rearrangements
+lmorigin(US ~ BRA + FR + GR + IT + PO + RUS + SPA + UK, data =Ga, nperm=nr) 
+
+```
+
+Both (parametric and permutational) with some large p-values (p "greater than" 0.05) indicates weak evidence against the null hypothesis so, you fail to reject the null hypothesis (Ho is not rejected).
+
+## **Significance of the all countries in A1, A2 and A3**
+
+The Gdata was divdided in three selected groups of countries using the USA as benchmark (i.e. dependent country); with the other countries as independent countries.
+
+The three groups of countries are as followed:
+
+* A1 - Euro zone countries: Germany, France, Italy, Spain
+* A2 - Countries from EU but not from Euro zone: Poland, United Kingdom
+* A3 - Not  EU or Euro zone countries: Brazil, Russia
+
+It has been decided to pick these countries for A1 to compare the countries with strong economy (Germany, France) with countries with lower economy (Italy, Spain) within Euro currency zone. For the same reason, the United Kingdom with Poland for A2. For A3, USA as a representative of a strong and stable economy and Russia, Brazil as countries with growing economy.
+
+The testing began whether a set of independent variables has   no   partial   effect   on   the   dependent   variable, "US". 
+
+The models are: 
+
+**US_A1 = B0 + B1FR + B2GR + B3IT + B4SPA + e**;
+**US_A2 = B0 + B1PO + B2UK + e**;
+**US_A3 = B0 + B1BRA + B2RUS + e**
+
+
+**Null Hypothesis**: The initial assumption is that there is no relation, which is expressed as: 
+
+**Ho_A1: B1 = B2 = B3 = B4 = 0**;
+**Ho_A2: B1 = B2 = 0**;
+**Ho_A3: B1 = B2 = 0**
+
+**Alternative Hypothesis**: At least one of the independent variables IS useful in explaining/predicting US, expressed as: 
+
+**H1_A1: At least one Bi is "not equal to" 0**;
+**H1_A2: At least one Bi is "not equal to" 0**;
+**H1_A3: At least one Bi is "not equal to" 0**
+
+### **LM and GLMs Comparison**
+
+The resuls is displayed below:
+
+```{r}
+# Model A1, A2 and A3
+
+#install.packages("texreg")
+suppressMessages(suppressWarnings(library("texreg")))
+#install.packages("readxl")
+suppressMessages(suppressWarnings(library("readxl")))
+
+Gdata<-read_excel("WorldData.xlsx")
+
+# 	USA, BRA,	FR,	GR,	IT,	PO,	RUS,	SPA,	UK
+US <- Gdata$USA
+BRA <- Gdata$BRA 
+FR <- Gdata$FR
+GR <- Gdata$GR
+IT <- Gdata$IT
+PO <- Gdata$PO
+RUS <- Gdata$RUS
+SPA <- Gdata$SPA
+UK <- Gdata$UK
+
+# Estimate with OLS (Model A1, A2 and A3):
+regA1<-lm(US ~ FR + GR + IT + SPA)
+regA2<-lm(US ~ PO + UK)
+regA3<-lm(US ~ BRA + RUS)
+
+# Estimate with GLS (MModel A1, A2 and A3):
+regA11<-glm(US ~ FR + GR + IT + SPA, family = gaussian)
+regA22<-glm(US ~ PO + UK, family = gaussian)
+regA33<-glm(US ~ BRA + RUS, family = gaussian)
+
+# Compare:
+screenreg(l = list(regA1,regA11,regA2,regA22,regA3,regA33))
+```
+
+Both (LM and GLM models) with some large p-values (p "greater than" 0.05) indicates weak evidence against the null hypothesis so, you fail to reject the null hypothesis (Ho is not rejected).
+
+******
+
+##**CONCLUSION**
+
+Completing the testing process of the significance of the Global Model, Model_A1, Model_A2 and Model_A3, it can be concluded that at least one of the countries stability index is not significant.
+
+After the global financial crisis, the topic of financial stability became very important. It became clear that for detecting financial stability risks, crisis and taking appropriate decisions one should be able to project future financial stability development. Globalization, financial innovations and STR(Scientific-technological revolution) started many financial processes bringing new transmission channels and making the process of measuring financial stability more complicated. To assess financial stability, a big number of economic and financial indicators must be monitored; to protect a stable country´s financial stablitiy index globlally against high risk countries.   
+
+##**REFERENCES**
+
+* European Central Bank (November 2013): "Financial STABILITY REVIEW"
+
+* Magyar Nemzeti Bank (November 2013): "Report on Financial Stability"
+
+* Slacík Tomás, Jakubík (June 2013) "Measuring Financial (In)Stability in Emerging Europe: A New Index-Based Approach" Financial stability report 
+
+* Blaise Gadanecz and Kaushik Jayaram (2008): "Measures of financial stability - a review"; IFC Bulletin No 31 
+
+* William R. Nelson and Roberto Perl (2005): "Selected Indicators of Financial Stability"
+
+* Martin CIHÁK 2007 "Systemic Loss: A Measure of Financial Stability" Czech Journal of Economics and Finance
+
+* World Economic and Financial Surveys April (2009) "Global Financial Stability Report"
+
+* José Gerardo de la Vega Meneses (2012) "Methodology for Measuring Financial Stability in Countries"
+
+* Adam Gersl and Jaroslav Hermánek (2007) "FINANCIAL STABILITY INDICATORS: ADVANTAGES AND DISADVANTAGES OF THEIR USE IN THE ASSESSMENT OF FINANCIAL SYSTEM STABILITY"
+
+* Detailed statistics on the EU and candidate countries, and various statistical publications for sale. http://www.epp.eurostat.ec.europa.eu 
+
+* www.bloomberg.com/  - Bloomberg a premier site for business and financial market news. 
+
+* www.oecd.org/ - International organisation helping governments tackle the economic, social and governance challenges of a globalised economy. 
+
+* www.marketwatch.com  - Stock Market Quotes, Business News and Financial News
+
+* www.worldbank.org/ -The World Bank 
+
+* http://www.clevelandfed.org/ -  federal reserve bank of Cleveland
+
+* www.imf.org/ - International Monetary Fund 
