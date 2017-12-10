@@ -1,5 +1,5 @@
 ---
-title: "DVM Bootstrap - Homework 4"
+title: "DVM Bootstrap - Work 4"
 author: "Jeremy Williams and Spyridoula Chrysikopoulou-Soldatou"
 date: "November 15, 2017"
 output:

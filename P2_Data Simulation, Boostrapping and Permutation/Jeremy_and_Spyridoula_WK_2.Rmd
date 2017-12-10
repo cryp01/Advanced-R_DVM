@@ -1,5 +1,5 @@
 ---
-title: "DVM Permutation Test - Homework 2"
+title: "DVM Permutation Test - Work 2"
 author: "Jeremy Williams and Spyridoula Chrysikopoulou-Soldatou"
 date: "October 18, 2017"
 output:
@@ -60,7 +60,7 @@ Our model is:
 
 ```{r}
 #install.packages("combinat")
-library("combinat")
+suppressMessages(suppressWarnings(library("combinat")))
 wc1 <- c(16,20,25,27,32,48,48)
 t1 <- c(75,83,85,85,92,97,99)
 tmg1 <- c(1.85,1.25,1.5,1.75,1.15,1.75,1.6)
@@ -122,9 +122,9 @@ All (intercept, T and TMG) small p-values (p "less than or equal to" 0.05) indic
 ```{r}
  
 #install.packages("combinat")
-library("combinat")
+suppressMessages(suppressWarnings(library("combinat")))
 #install.packages("ape")
-library("ape")
+suppressMessages(suppressWarnings(library("ape")))
 wc1 <- c(16,20,25,27,32,48,48)
 t1 <- c(75,83,85,85,92,97,99)
 tmg1 <- c(1.85,1.25,1.5,1.75,1.15,1.75,1.6)
@@ -145,7 +145,7 @@ Both (parametric and permutational) small p-values (p "less than or equal to" 0.
 ```{r}
 
 #install.packages("texreg")
-library("texreg")
+suppressMessages(suppressWarnings(library("texreg")))
 wc1 <- c(16,20,25,27,32,48,48)
 t1 <- c(75,83,85,85,92,97,99)
 tmg1 <- c(1.85,1.25,1.5,1.75,1.15,1.75,1.6)

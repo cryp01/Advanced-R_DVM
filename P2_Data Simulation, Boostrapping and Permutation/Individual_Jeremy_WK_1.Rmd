@@ -1,5 +1,5 @@
 ---
-title: "DVM Permutation Test - Homework 1"
+title: "DVM Permutation Test - Work 1"
 author: "Jeremy Williams"
 date: "October 11, 2017"
 output:
@@ -9,7 +9,7 @@ output:
 
 ```{r}
 #install.packages("combinat")
-library("combinat")
+suppressMessages(suppressWarnings(library("combinat")))
 ```
 
 ## **Correlation - Exact Test**
@@ -188,7 +188,7 @@ Therefore, the additive is efficient.
 ### **Summary Statistics**
 
 ```{r}
-library(pastecs)
+suppressMessages(suppressWarnings(library(pastecs)))
 
 stand=c(2.5, 3.4, 2.9, 4.1, 5.3, 3.4, 1.9, 3.3, 1.8)
 stand_ad = c(2.5, 3.4, 2.9, 4.1, 5.3, 3.4, 1.9, 3.3, 1.8,
