@@ -1,0 +1,158 @@
+---
+title: 'DVM Reproducible Research'
+author: "Jeremy Williams"
+date: "October 6, 2017"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+## **CO2 Uptake in Grass Plants**
+
+*This document provides a reproducible research of "Carbon Dioxide Uptake in Grass Plants" from a library dataset in "R" called "datasets".* 
+
+*The research was complied into a initial data frame called "CO2"*
+
+*CO2 has 84 rows and 5 columns of data from an experiment on the cold tolerance of the grass species "Echinochloa crus-galli".*
+
+*CO2 was uptaken within six (6) plants from Quebec and six (6) plants from Mississippi.* 
+
+*It was measured at several levels of ambient CO2 concentration. Half the plants of each type were chilled overnight before the experiment was conducted.*
+
+******
+
+## **Summary of CO2**
+
+```{r}
+#install.packages("datasets")
+suppressMessages(suppressWarnings(library(datasets))) 
+data(CO2)
+summary(CO2)
+```
+
+## **Summary Explained**
+
+- **Plant**: *an ordered factor with levels **Qn1 < Qn2 < Qn3 < ... < Mc1** giving a unique identifier for each plant.*
+
+- **Type**: *a factor with levels Quebec and Mississippi giving the origin of the plant*
+
+- **Treatment**: *a factor with levels nonchilled chilled*
+
+- **Conc**: *a numeric vector of ambient carbon dioxide concentrations (mL/L)*.
+
+- **Uptake**: *a numeric vector of carbon dioxide uptake rates (umol/m^2 sec)*.
+
+******
+## **Relationship between "Type" and "Treatment"**
+
+### **Table of CO2-Type **
+```{r}
+table(CO2$Type)
+```
+
+### **Table of CO2-Treatment **
+```{r}
+table(CO2$Treatment)
+```
+
+### **Table of CO2-Type and Treatment ** 
+```{r}
+table(CO2$Type,CO2$Treatment)
+```
+
+******
+
+## **Cross Table of CO2 - Type and Treatment**
+
+### **Relationship of Type and Treatment using the Cross Tabulations**
+
+
+```{r}
+#install.packages("gmodels")
+suppressMessages(suppressWarnings(library("gmodels")))
+#Contingency tables 
+joint.CO2<-CrossTable(CO2$Type,CO2$Treatment, prop.chisq = F)
+```
+- **Note**: *Based on PROC Frequency "PROC FREQ" in SAS or "CROSSTABS" in SPSS"*
+
+### **Nested Contingency Tables** 
+```{r}
+joint.CO2
+```
+- **Note**: *Based on PROC Frequency "PROC FREQ" in SAS or "CROSSTABS" in SPSS"*
+
+******
+## **Barplot Relationship of "Type" and "Treatment" **
+
+```{r}
+par(mfrow=c(1,1))
+joint.CO2_count<-joint.CO2$t
+barplot(joint.CO2_count, beside = TRUE, col = rainbow(2), 
+        ylab = "Type", xlab = "Treatment")
+legend("center", c("Quebec", "Mississippi"), 
+       pch = 15, col = rainbow(2))
+```
+
+******
+## **"Conc" and "UpTake" using Histograms**
+
+### **Histogram of CO2 Concentrations**
+```{r}
+par(mfrow=c(1,1))
+hist(CO2$conc, xlab="CO2 Concentrations", 
+     main="Histogram of CO2 Concentrations", col="red")
+```
+
+### **Histogram of CO2 Concentrations with it's Density Curve (DC)**
+```{r}
+par(mfrow=c(1,1))
+x2 <- CO2$conc
+hist(CO2$conc, xlab="CO2 Concentrations w/ DC", 
+     main="Histogram of CO2 Concentrations w/ DC", 
+     col="green", probability=TRUE)
+lines(density(x2),col="blue", lwd=2)
+```
+
+### **Histogram of CO2 Uptake Rates **
+```{r}
+par(mfrow=c(1,1))
+hist(CO2$uptake, xlab="CO2 Uptake Rates", 
+     main="Histogram of CO2 Uptake Rates", col="red")
+```
+
+### **Histogram of CO2 Uptake Rates with it's Density Curve (DC)** 
+```{r}
+par(mfrow=c(1,1))
+x3 <- CO2$uptake
+hist(CO2$uptake, xlab="CO2 Uptake Rates w/ DC", 
+     main="Histogram of CO2 Uptake Rates w/ DC", 
+     col="green", probability=TRUE)
+lines(density(x3),col="blue", lwd=2)
+```
+
+******
+## **Linear Regression of "Conc" and "Uptake"**
+
+### **Linear Regression Analysis of "Conc" and "Uptake"**
+```{r}
+fm <- lm(CO2$uptake ~ CO2$conc, data=CO2)
+summary(fm)
+```
+
+### **Linear Regression Model of "Conc" and "Uptake"**
+```{r}
+par(mfrow=c(1,1))
+plot(CO2$conc, CO2$uptake, 
+     xlab="Ambient carbon dioxide concentrations (mL/L)", 
+     ylab="Carbon dioxide uptake rates (umol/m^2 sec)", 
+     main="Linear Regression Model of Conc and Uptake", col="red")
+fm <- lm(CO2$uptake ~ CO2$conc, data=CO2)
+abline(coef(fm), lty=4, col="blue")
+
+#Extract coefficients of Conc and Uptake
+fm_coef <- round(coef(fm), 3) 
+
+#Display the regression equation of the line
+mtext(bquote(y == .(fm_coef[2])*x + .(fm_coef[1])),
+      adj=1, padj=0)
+```
