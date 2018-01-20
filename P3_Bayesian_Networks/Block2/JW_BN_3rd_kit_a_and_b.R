@@ -1,13 +1,6 @@
----
-title: "BAYESIAN NETWORKS 3rd Exercise Block 2"
-author: "Jeremy Williams"
-date: "January 16th, 2018"
-output:
-  pdf_document: default
-  html_document: default
----
 
-```{r}
+#Delivery 3, Exercise 9 BLOCK 2: Jeremy Williams  
+
 #install.packages("bnlearn")
 #install.packages("gRain")
 #source("http://bioconductor.org/biocLite.R")
@@ -168,7 +161,47 @@ predOT
 predOT$E[["true"]]
 
 
+#BY HAND (See PDF for Formulas)
 
-```
+x = (0.9*(0.03*0.03) + 0.1*1)*0.2 
+x
 
+y = 0.9*((0.03*0.03*0.2) + 0.99*0.99*0.8) + 0.1*1
+y
 
+(x/y)
+
+1-(x/y)
+
+#------
+x1 = 0.9*(0.97*0.97) *0.2  
+x1
+y1 = 0.9*0.97*0.97*0.2 + 0.9*(0.01*0.01*0.8) 
+y1
+x1/y1
+
+1-(x1/y1)
+
+#------
+x2 = (0.9*0.97*0.9*0.03 + 0.97*0.9*0.1)*0.2
+x2
+
+y2 = (0.9*0.97*0.9*0.03*0.2 + 0.9*0.97*0.2*0.1 
+      + 0.9*0.99*0.9*0.01*0.8 + 0.9*0.01*0.8*0.1) 
+y2
+
+x2/y2
+
+1-(x2/y2)
+
+#-----------
+
+x3 = 0.97*0.03*0.2  
+x3
+
+y3 = 0.97*0.03*0.2+0.01*0.99*0.8
+y3
+
+x3/y3
+
+1-(x3/y3)
