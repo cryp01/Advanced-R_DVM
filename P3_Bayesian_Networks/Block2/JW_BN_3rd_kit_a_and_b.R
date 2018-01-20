@@ -1,6 +1,5 @@
 
-#Delivery 3, Exercise 9 BLOCK 2: Jeremy Williams  
-
+  
 #install.packages("bnlearn")
 #install.packages("gRain")
 #source("http://bioconductor.org/biocLite.R")
